@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
         <link rel="stylesheet" href="assets/font-awesome-more/css/font-awesome.min.css">
         <link rel="stylesheet" href="assets/bootstrap/css/bootstrap-responsive.min.css">
+        <link rel="stylesheet" href="css/styles/sunburst.css">
         <link rel="stylesheet" href="css/main.css">
 
         <script src="assets/jquery/jquery.min.js"></script>
@@ -74,12 +75,14 @@
                 </div><!-- workspace-left -->
 
                 <div class="workspace-right pull-left">
+
                     <div class="full" data-bind="foreach: tabs">
                         <div class="full" data-bind="css: { zero : $root.currentTab() != id }">
 
                             <div class="alert topalert" data-bind="css: { 'alert-danger': dirty(), 'alert-info': !dirty() }">
                                 <span data-bind="if: !filepath()">Untitled file.</span>
                                 <span data-bind="text: filepath()"></span>
+                                <a href="#" class="to_preview_html" onclick="javascript:viewInHtml();">Preview HTML</a>
                                 <div class="buttons pull-right">
                                     <span data-bind="if: dirty"><i style="" class="icon-exclamation-sign"></i><b> File has changed. </b></span>
                                     <button class="btn btn-mini btn-danger" data-bind="click:saveFile, attr: {disabled: !filepath() }"><i class="icon-save"></i>&nbsp;Save</button>
@@ -98,10 +101,19 @@
                                 </div>
                                 <div class="editor-preview pull-left">
                                     <div class="edit">
-                                    <div data-bind="html: convertedContent()" class="section_to_print"></div>
+
+                                    <div data-bind="html: convertedContent()" class="section_to_print">
+YES
+good is good.
+                                    </div>
                                     </div>
                                 </div>
                                 <div class="clearfix">
+                                </div>
+                                <div class="html">
+                                <pre>
+Hello
+                                </pre>
                                 </div>
                             </div>
                         </div>
@@ -145,7 +157,8 @@
         <script src="assets/showdown/extensions/wikilink.js"></script>
         <script src="assets/showdown/extensions/table.js"></script>
         <script src="assets/bootbox/bootbox.min.js"></script>
-        
+        <script src="js/highlight.pack.js"></script>
+        <script src="js/kibo.js"></script>
         <script src="js/models.js"></script>
         <script src="js/main.js"></script>
  

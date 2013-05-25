@@ -4,6 +4,7 @@ var markgiu = markgiu || {};
 markgiu.fs = require('fs');
 markgiu.converter = new Showdown.converter({ extensions: ['github', 'wikilink', 'table'] });
 
+
         
 markgiu.DocumentPanel = function(options){
     
@@ -66,7 +67,7 @@ markgiu.DocumentPanel = function(options){
                     bootbox.confirm("This page does not exist. Do you want to create it?",
                         function(resp){
                             if(resp){
-                                console.log("and here we should CREATE the page....");
+                                //console.log("and here we should CREATE the page....");
                                 createCallback(path);
                             }
                         }
@@ -87,7 +88,7 @@ markgiu.DocumentPanel = function(options){
   
   
     self.activateEditor = function(element){
-
+        
         self.editor = ace.edit(element);
         self.element = element;
         self.editor.setTheme("ace/theme/twilight");
@@ -104,6 +105,10 @@ markgiu.DocumentPanel = function(options){
             var content = self.editor.getValue();
             self.content(content);
             self.dirty(true);
+
+            $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
+            //window.cache_content  = content;
+            //self.content = content;
         });    
 
         self.editor.focus();
@@ -112,7 +117,8 @@ markgiu.DocumentPanel = function(options){
       
         
     self.checkDirty = function(){
-        var ct = self.editor.getValue();
+        //var ct="";
+        var ct = self.editor.getValue();//temp hack;
         if(ct == self.initialContent){
             self.dirty(false);
         } else {
@@ -130,7 +136,8 @@ markgiu.DocumentPanel = function(options){
         markgiu.fs.writeFileSync(path, self.content());
         self.initialContent = self.content();
         self.dirty(false);
-        bootbox.alert("file saved!");
+        $('pre code').each(function(i, e) {hljs.highlightBlock(e)});
+        //bootbox.alert("file saved!",function(){alert('yES');});
     };
     
     
@@ -258,7 +265,7 @@ markgiu.AppGui = function(){
         }
 
         self.currentTab(tab.id);        
-        tab.editor.resize();
+        tab.editor.resize();//temp hack
         
         self.currentTabChange(tab);   
         self.sub = tab.content.subscribe(function(newVal){
