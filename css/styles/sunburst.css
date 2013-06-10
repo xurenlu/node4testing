@@ -3,9 +3,11 @@
 Sunburst-like style (c) Vasily Polovnyov <vast@whiteants.net>
 
 */
-
+pre {
+    padding:0;
+}
 pre code {
-  display: block; padding: 0.5em;
+  display: block; padding: 0.0em;
   background: #000; color: #f8f8f8;
 }
 

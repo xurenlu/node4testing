@@ -12,142 +12,135 @@
         <link rel="stylesheet" href="assets/bootstrap/css/bootstrap-responsive.min.css">
         <link rel="stylesheet" href="css/styles/sunburst.css">
         <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/nodeunit.css">
 
-        <script src="assets/jquery/jquery.min.js"></script>
+
+<link href="codemirror/lib/codemirror.css" rel="stylesheet" type="text/css" />
+<link href="codemirror/theme/monokai.css" rel="stylesheet" type="text/css" />
+<script src="codemirror/lib/codemirror.js" type="text/javascript"></script>
+
+<script src="codemirror/mode/css/css.js" type="text/javascript"></script>
+<script src="codemirror/mode/xml/xml.js" type="text/javascript"></script>
+<script src="codemirror/mode/javascript/javascript.js" type="text/javascript"></script>
+<script src="codemirror/mode/htmlmixed/htmlmixed.js" type="text/javascript"></script>
+<script src="codemirror/mode/clike/clike.js" type="text/javascript"></script>
+<script src="codemirror/mode/php/php.js" type="text/javascript"></script>
+
+<script src="codemirror/addon/selection/active-line.js" type="text/javascript"></script>
+<script src="codemirror/addon/selection/mark-selection.js" type="text/javascript"></script>
+<script src="codemirror/addon/search/searchcursor.js" type="text/javascript"></script>
+<script src="codemirror/addon/search/search.js" type="text/javascript"></script>
+<script src="codemirror/addon/search/match-highlighter.js" type="text/javascript"></script>
+<script src="codemirror/addon/display/placeholder.js" type="text/javascript"></script>
+<script src="codemirror/addon/dialog/dialog.js" type="text/javascript"></script>
+<script src="codemirror/keymap/vim.js" type="text/javascript"></script>
+<script src="assets/jquery/jquery.min.js"></script>
+<script src="js/nodeunit.js"></script>
+
+<style type="text/css">
+.CodeMirror {
+border-top: 1pxsolidblack;
+border-bottom: 1pxsolidblack;
+height: auto;;
+}
+.CodeMirror-activeline-background {
+background: #000!important;
+}
+.CodeMirror-selected {
+background-color: blue!important;
+}
+.CodeMirror-selectedtext {
+color: white;
+}
+.CodeMirror-focused.cm-matchhighlight {
+background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVQI12NgYGBgkKzc8x9CMDAwAAAmhwSbidEoSQAAAABJRU5ErkJggg==);
+background-position: bottom;
+background-repeat: repeat-x;
+}
+.CodeMirror-empty {
+outline: 1pxsolid#c22;
+}
+.CodeMirror-empty.CodeMirror-focused {
+outline: none;
+}
+.CodeMirrorpre.CodeMirror-placeholder {
+color: #999;
+}
+.CodeMirror-scroll {
+overflow-y: hidden;
+overflow-x: auto;
+}
+.alert-success button.act-save {
+    display:none;
+}
+</style>
 
     </head>
     <body>
-        <div id="wrap">
-            
-            <div class="navbar top-navbar">
-                <div class="navbar-inner">
-                    <a class="brand" href="#">Mark<i class="icon-arrow-down"></i>Giu</a>
-                    <ul class="nav pull-left">
-                        <li>
-                            <a href="#" data-bind="click:addTabNew"><i class="icon-plus-sign"></i>New File</a>
-                        </li>
-                        <li>
-                            <a href="#" data-bind="click:chooseFileToOpen"><i class="icon-file"></i>Open file</a>
-                        </li>
-                    </ul>
-                </div>
-            </div><!-- top-navbar -->
 
-           
-            <div id="" class="xcontainer">
-                <!-- ko if: !tabs().length -->
-                <div class="container">
-                    <div data-bind="" class="">
-                        <div class="hero-unit splash" style="">
-                            <h1>Welcome to Mark<i class="icon-arrow-down"></i>Giu</h1>
-                            <p>
-                            A node-webkit based markdown editor
-                            </p>
-                            <p>
-                                <button class="btn btn-large btn-primary" data-bind="click: chooseFileToOpen">Open a file</button>
-                                <button class="btn btn-large btn-primary" data-bind="click: addTabNew">Create a new file</button>
-                            </p>
-                        </div>
-                    </div>
-                
-                </div>            
-                <!-- /ko -->
-                
-                <!-- ko if: tabs().length -->  
-                
-                <div class="workspace-left pull-left">
- 
-                    <div class="alert topalert" data-bind="if: tabs().length">
-                            <span class="" href="">Open files</span>
-                    </div> 
+  <div id="wrap">   
+  <div class="tabbable"> <!-- Only required for left/right tabs -->
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">编写测试代码</a></li>
+    <li><a href="#tab2" data-toggle="tab">运行和查看结果</a></li>
+    <li><a href="#tab3" data-toggle="tab">设置</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="tab1">
+   
+<div class="noticeCss"  >
+        <button class="btn btn-primary" type="button" data-bind="click:chooseNewFile">加载测试代码</button>
+        <button class="btn btn-primary" type="button" data-bind="click:revert">放弃修改</button>
+        <span data-bind="text:filePath,visible:isFromFile"></span>
+        <button class="btn btn-primary act-save" type="button" data-bind="click:saveFile" style=";">保存</button>
+</div>
+     <textarea rows="8" cols="80" id="code" readonly="true">
+       var tests = {
+        "test1":function(test){
+            test.ok(2>1,"2>1");
+            test.done();
+        },
+        "test2":function(test){
+            test.ok(3<5,"3<5");
+            test.done();
+        }
 
-                    <div class="tab-files" data-bind="foreach: tabs">
-                        <div class="tab-button" 
-                            data-bind="css: { selected : id == $root.currentTab() }, click: $root.selectTab">
-                                <a data-bind=""><span data-bind="text: label"></span></a>
-                                &nbsp;
-                                <span data-bind="if: dirty"><i style="color:red" class="icon-exclamation-sign"></i></span>
-                                <span class="pull-right">
-                                    <a href="#" class="" data-bind="click: $root.closeTab"><i class="icon-ban-circle"></i></a>
-                                </span>
-                        </div>
-                    </div>
-                </div><!-- workspace-left -->
+     }</textarea>
+    </div>
+    <div class="tab-pane" id="tab2">
+        <button class="btn btn-success" type="button" data-bind="click:runTest" >运行测试代码</button>
+        <div  style="border:1px solid blue;">
+            <h2 id="nodeunit-header"></h2>
+            <h2 id="nodeunit-banner"></h2>
+            <ol id="nodeunit-tests"></ol>
+            <h2 id="nodeunit-userAgent"></h2>
+            <p id="nodeunit-testresult"></p>
+        </div>
 
-                <div class="workspace-right pull-left">
-
-                    <div class="full" data-bind="foreach: tabs">
-                        <div class="full" data-bind="css: { zero : $root.currentTab() != id }">
-
-                            <div class="alert topalert" data-bind="css: { 'alert-danger': dirty(), 'alert-info': !dirty() }">
-                                <span data-bind="if: !filepath()">Untitled file.</span>
-                                <span data-bind="text: filepath()"></span>
-                                <a href="#" class="to_preview_html" onclick="javascript:viewInHtml();">Preview HTML</a>
-                                <div class="buttons pull-right">
-                                    <span data-bind="if: dirty"><i style="" class="icon-exclamation-sign"></i><b> File has changed. </b></span>
-                                    <button class="btn btn-mini btn-danger" data-bind="click:saveFile, attr: {disabled: !filepath() }"><i class="icon-save"></i>&nbsp;Save</button>
-                                    <button class="btn btn-mini btn-danger" data-bind="click:$root.chooseFileToSaveAs"><i class="icon-save"></i>&nbsp;Save as ...</button>
-                                    <button class="btn  btn-mini " data-bind="click: $root.closeTab"><i class="icon-ban-circle"></i>&nbsp;Close</button>
-                                </div>
-                                <div class="clearfix"></div>
-                            </div>
-
-                            <div class="editor-wrapper full" data-bind="css: { zero : $root.currentTab() != id }, attr: {id: id }">
-                            
-                                <div class="editor-markup pull-left">
-                                    <div class="edit full">
-                                        <div class="editor full" data-bind=""></div>
-                                    </div>
-                                </div>
-                                <div class="editor-preview pull-left">
-                                    <div class="edit">
-
-                                    <div data-bind="html: convertedContent()" class="section_to_print">
-YES
-good is good.
-                                    </div>
-                                    </div>
-                                </div>
-                                <div class="clearfix">
-                                </div>
-                                <div class="html">
-                                <pre>
-Hello
-                                </pre>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    
-                    
-                    <!-- /ko -->
-                    
-                </div><!-- workspace-right -->
-                <div class="clearfix"></div>
+    </div>
+    <div class="tab-pane" id="tab3">
+        <ul>
+            <li>
+                是否开启HTTP Proxy:
+                <input type="checkbox" data-bind="click:checkProxyServer">
+            </li>
+            <li>
+                是否开启Http Server:
+                <input type="checkbox" data-bind="click:checkHttpServer">
+            </li>
+            <li>
+                是否开启执行来自httpServer 的js请求:
+                <input type="checkbox" data-bind="click:checkHttpJsQuery">
+            </li>
+        </ul>
+    </div>
+  </div>
+</div>
 
 
-                
-                
-            <!-- /ko -->
-            <div>
-                <input class="hide" id="choosefile" type="file" />
-                <input class="hide" id="savefileas" type="file" nwsaveas />
-            </div>
-                
-            </div><!-- xcontainer -->
+    <input id="openFile" data-bind="value:filePath" type="file" style="display:none;"/>
 
-            <div class="bottom-navbar">
-                <div class="navbar-inner">
-                    <div class="container">
-                        <p class="navbar-text muted" style="text-align:center">A node-webkit based MarkDown editor by Mauro Bianchi 2013 - https://github.com/bianchimro/markgiu</p>
-                    </div>
-                 </div>
-            </div><!-- bottom-navbar -->
-       
-        </div><!-- wrap --> 
-        
-        <!-- le javascript -->
+
 
         <script src="assets/knockout/knockout-2.2.1.js"></script>
         <script src="assets/bootstrap/js/bootstrap.min.js"></script>
@@ -159,8 +152,20 @@ Hello
         <script src="assets/bootbox/bootbox.min.js"></script>
         <script src="js/highlight.pack.js"></script>
         <script src="js/kibo.js"></script>
-        <script src="js/models.js"></script>
-        <script src="js/main.js"></script>
+        <script src="js/binding.js"></script>
+        <script type="text/javascript">
+        CodeMirror.commands.save = function() {
+            //$("[data-toggle=modal]").click();
+        };
+        window.editor = null;
+$(document).ready(function(){
+
+
+});
+
+</script
+</script>
+
  
     </body>
 </html>

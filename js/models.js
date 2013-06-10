@@ -1,7 +1,7 @@
 var markgiu = markgiu || {};
 
 
-markgiu.fs = require('fs');
+//markgiu.fs = require('fs');
 markgiu.converter = new Showdown.converter({ extensions: ['github', 'wikilink', 'table'] });
 
 
@@ -22,7 +22,7 @@ markgiu.DocumentPanel = function(options){
     
     self.filepath = ko.observable(options.filepath || '');
     self.dirty = ko.observable(options.dirty || false);
-    
+    self.title = ko.observable("未命名");
     
     self.getBasePath = function(path){
         if(!path){ return '';}
@@ -45,7 +45,9 @@ markgiu.DocumentPanel = function(options){
         return null;     
     }, this);
     
-    
+    self.title = ko.computed(function(){
+       
+    });
     self.label = ko.computed(function(){
         var fn = self.filepath();
         if(fn){
@@ -93,6 +95,7 @@ markgiu.DocumentPanel = function(options){
         self.element = element;
         self.editor.setTheme("ace/theme/twilight");
         self.editor.getSession().setMode("ace/mode/markdown");
+        //self.editor.setWrapBehavioursEnabled(true);
         if(self.content()){
             self.editor.setValue(self.content());
             self.editor.clearSelection();

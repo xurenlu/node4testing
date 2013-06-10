@@ -1,5 +1,5 @@
 {
-  "name": "Markgiu",
+  "name": "V!!",
   "main": "index.html",
   "window": {
     "icon": "link.png",
@@ -8,8 +8,8 @@
     "height": 600,
     "position": "mouse",
     "min_width": 800,
-    "min_height": 400,
-    "show" : false
+    "min_height": 480,
+    "show" : true
   },
   "webkit": {
     "plugin": true
