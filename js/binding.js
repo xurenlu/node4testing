@@ -11,6 +11,9 @@ n4t.App  = function(options){
 	self.noticeCss= ko.observable("");
 	self.fileContent = ko.observable("");//硬盘上的文件的内容;
 	self.resultData = ko.observable("<hr>");
+	self.proxyRunning =false;
+	//ko.observable(false);
+	self.httpRunning = ko.observable(false);
 	self.checkProxyServer = function(){
 		return true;
 	}
@@ -20,6 +23,14 @@ n4t.App  = function(options){
 	self.checkHttpJsQuery = function(){
 		return true;
 	}
+	self.startHttpProxy=function(){
+
+	}
+	self.startHttpServer = function(){
+
+	}
+	self.httpProxyRunning=function(){}
+	self.httpServerRunning=function(){}
 	self.openFile=function(){
 		var path = self.filePath();
 		n4t.fs.readFile(path, 'utf8', function (err,data) {
@@ -31,7 +42,6 @@ n4t.App  = function(options){
 			self.initialContent(data);
 			self.changed();
 			self.fileContent(data);
-            //self.addTab({content:data, filepath:path});
         });
 
 		//console.log(self.filePath());
@@ -41,12 +51,12 @@ n4t.App  = function(options){
 		if(
 			self.isFromFile() && (self.initialContent()!=window.editor.getValue() )
 			 ) {
-			console.log("alert-error");
+			//console.log("alert-error");
 			return "alert alert-error";
 		}else{
 			
 			if(self.isFromFile()){
-				console.log("alert alert-success");
+				//console.log("alert alert-success");
 				return "alert alert-success";
 			}else{
 				console.log(" no css");
@@ -70,8 +80,10 @@ n4t.App  = function(options){
 		$("#openFile").click();
 	};
 	self.saveFile = function(){
-		var val = window.editor.getValue();
-		n4t.fs.writeFileSync(self.filePath(),val);
+		if(self.filePath()!="" ){
+			var val = window.editor.getValue();
+			n4t.fs.writeFileSync(self.filePath(),val);
+		}
 	}
 	self.showSave=function(){
 		return false;
@@ -83,6 +95,9 @@ n4t.App  = function(options){
 			return false;
 		}else
 			return true;
+	}
+	self.chooseFileToSaveAs=function(){
+		$("#saveFileAs").trigger("click");
 	}
 	self.revert = function(){
 		window.editor.setValue(self.fileContent);
@@ -97,13 +112,23 @@ n4t.App  = function(options){
 		}
 
 	};
+
 }
 $(document).ready(function(){
 	var n4tapp = new n4t.App({filePath:"",initialContent:""});
-	console.log(n4tapp);
+	//console.log(n4tapp);
     ko.applyBindings(n4tapp, $("#wrap")[0]);
     $("#openFile").change(function(){
     	n4tapp.openFile();
+    	n4tapp.filePath($(this).val());
+    });
+    
+    $("#saveFileAs").change(function(){
+    	var newPath = $(this).val();
+    	n4tapp.filePath(newPath);
+    	n4tapp.saveFile();
+		n4tapp.changed();    	
+		n4tapp.openFile();
     });
     var editor = window.editor = CodeMirror.fromTextArea(document.getElementById("code"), {
 mode:"javascript",

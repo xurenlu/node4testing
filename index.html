@@ -88,13 +88,25 @@ overflow-x: auto;
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="tab1">
-   
-<div class="noticeCss"  >
-        <button class="btn btn-primary" type="button" data-bind="click:chooseNewFile">加载测试代码</button>
-        <button class="btn btn-primary" type="button" data-bind="click:revert">放弃修改</button>
-        <span data-bind="text:filePath,visible:isFromFile"></span>
-        <button class="btn btn-primary act-save" type="button" data-bind="click:saveFile" style=";">保存</button>
-</div>
+    <table>
+        <tr>
+            <td  width="200px">
+    <div class="operate" style="clear:both;padding-bottom:0.3em;">
+            <button class="btn btn-primary" type="button" data-bind="click:chooseNewFile" >打开</button>
+            <button class="btn btn-primary act-save" type="button" data-bind="click:saveFile,attr:{disabled:!filePath()}" >保存</button>         
+            <button class="btn btn-primary act-save" type="button" data-bind="click:chooseFileToSaveAs" >另存</button>         
+    </div>
+            </td>
+            <td>
+                    <div class="noticeCss"  >  
+                    <span data-bind="text:filePath,visible:isFromFile"></span>
+                    </div>
+            </td>
+            
+        </tr>
+    </table>
+
+
      <textarea rows="8" cols="80" id="code" readonly="true">
        var tests = {
         "test1":function(test){
@@ -104,13 +116,20 @@ overflow-x: auto;
         "test2":function(test){
             test.ok(3<5,"3<5");
             test.done();
+        },
+        "test3":function(test){
+            httpget("http://s.taobao.com/search?q=mp3",{},function(res){
+                console.log(res.headers);
+                test.ok(res.headers,"get from taobao");
+                test.done();
+            });
         }
 
      }</textarea>
     </div>
     <div class="tab-pane" id="tab2">
         <button class="btn btn-success" type="button" data-bind="click:runTest" >运行测试代码</button>
-        <div  style="border:1px solid blue;">
+        <div  >
             <h2 id="nodeunit-header"></h2>
             <h2 id="nodeunit-banner"></h2>
             <ol id="nodeunit-tests"></ol>
@@ -124,10 +143,12 @@ overflow-x: auto;
             <li>
                 是否开启HTTP Proxy:
                 <input type="checkbox" data-bind="click:checkProxyServer">
+                &nbsp;&nbsp;端口:<input type="text" class="input-small" style="width:3em;" data-bind="disable:httpProxyRunning"
             </li>
             <li>
                 是否开启Http Server:
                 <input type="checkbox" data-bind="click:checkHttpServer">
+                &nbsp;&nbsp;端口:<input type="text" class="input-small"  style="width:3em;" data-bind="disable:httpServerRunning"
             </li>
             <li>
                 是否开启执行来自httpServer 的js请求:
@@ -139,8 +160,8 @@ overflow-x: auto;
 </div>
 
 
-    <input id="openFile" data-bind="value:filePath" type="file" style="display:none;"/>
-
+    <input id="openFile"  type="file" style="display:none;"/>
+    <input id="saveFileAs" type="file" style="display:none" nwsaveas/>
 
 
         <script src="assets/knockout/knockout-2.2.1.js"></script>
@@ -155,17 +176,8 @@ overflow-x: auto;
         <script src="js/kibo.js"></script>
         <script src="js/binding.js"></script>
         <script type="text/javascript">
-        CodeMirror.commands.save = function() {
-            //$("[data-toggle=modal]").click();
-        };
         window.editor = null;
-$(document).ready(function(){
-
-
-});
-
-</script
-</script>
+        </script>
 
  
     </body>
