@@ -27,19 +27,22 @@ function test_rule(options){
     return matched_rule;
 }
 
-function push(options){
+function push_proxy_rule(options){
     intercept_rules.push(options);
 }
-function clear(){
+function clear_proxy_rule(){
     intercept_rules=[];
+}
+function get_proxy_rules(){
+    return intercept_rules;
 }
 function log(arg,level){
 
     console.log(arg);
 }
 var matched_params = [];
-push({host:"dos.com",path:"http://s.com/a",body:"is from /a",headers:{Server:"notNginx"}});
-push({host:"log.mmstat.com",callback:function(req){
+push_proxy_rule({host:"dos.com",path:"http://s.com/a",body:"is from /a",headers:{Server:"notNginx"}});
+push_proxy_rule({host:"log.mmstat.com",callback:function(req){
     query_string = qs.parse(req.path);
     if(query_string["gokey"]){
         var clickUrl = query_string["gokey"];
@@ -54,6 +57,7 @@ push({host:"log.mmstat.com",callback:function(req){
 
 var app = express();
 app.use(express.bodyParser());
+
 app.get('/matched_params', function(req, res){
     res.end(JSON.stringify(matched_params));
 });
@@ -64,12 +68,33 @@ app.get("/reset_matched_params",function(req,res){
 });
 app.post("/exec_js",function(req,res){
     console.log(req.body.js);
-    eval(req.body.js);
+    console.log(req.body.url);
+    var js = req.body.js;
+    var url = req.body.url;
+    var gui = require("nw.gui");
+    var currentWindow = window;
+    setTimeout(function(){
+        var win = gui.Window.get(window.open(url));
+        win.on("loaded",function(){
+            console.log("try to append script node");
+            var sc = win.window.document.createElement("script");
+            sc.innerHTML= js;
+            win.window.document.body.appendChild(sc);
+            console.log("script node append to body");
+            win.close();
+        });
+        //eval(req.body.js);
+    },50);
     var msg = {code:200,"msg":"done"};
     res.end(JSON.stringify(msg)); 
+
 });
-app.listen(8894);
-window.http_server = app;
+app.all("/",function(req,res){
+    res.end("Welcome to node4Testing;");
+
+});
+//app.listen(8894);
+window.http_server = http.createServer(app);
 
 
 //在本地创建一个server监听本地local_port端口
@@ -144,9 +169,9 @@ var netServer = net.createServer(function(client) {
             server.write(buffer);
     }
 });
-netServer.listen(local_port);
+//netServer.listen(local_port);
 window.proxyServer = netServer;
-console.log('Proxy server running at localhost:' + local_port);
+
 //处理各种错误
 
 process.on('uncaughtException', function(err) {

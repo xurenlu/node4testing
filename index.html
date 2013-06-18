@@ -35,8 +35,10 @@
 <script src="codemirror/addon/dialog/dialog.js" type="text/javascript"></script>
 <script src="codemirror/keymap/vim.js" type="text/javascript"></script>
 <script src="assets/jquery/jquery.min.js"></script>
+<script src="js/highcharts.js"></script>
 <script src="js/nodeunit.js"></script>
 <script src="js/http.js"></script>
+<script src="js/nodeproxy.js"></script>
 
 <style type="text/css">
 .CodeMirror {
@@ -85,6 +87,8 @@ overflow-x: auto;
     <li class="active"><a href="#tab1" data-toggle="tab">编写测试代码</a></li>
     <li><a href="#tab2" data-toggle="tab">运行和查看结果</a></li>
     <li><a href="#tab3" data-toggle="tab">设置</a></li>
+    <li><a href="#tab4" data-toggle="tab">对比测试</a></li>
+
   </ul>
   <div class="tab-content">
     <div class="tab-pane active" id="tab1">
@@ -142,19 +146,30 @@ overflow-x: auto;
         <ul>
             <li>
                 是否开启HTTP Proxy:
-                <input type="checkbox" data-bind="click:checkProxyServer">
-                &nbsp;&nbsp;端口:<input type="text" class="input-small" style="width:3em;" data-bind="disable:httpProxyRunning"
+                <input type="checkbox" data-bind="click:checkProxyServer,checked:proxyChecked" value="1">
+                &nbsp;&nbsp;端口:<input type="text" class="input-small" style="width:3em;" data-bind="value:httpProxyPort,attr:{disabled:proxyRunning()}"
             </li>
             <li>
                 是否开启Http Server:
-                <input type="checkbox" data-bind="click:checkHttpServer">
-                &nbsp;&nbsp;端口:<input type="text" class="input-small"  style="width:3em;" data-bind="disable:httpServerRunning"
+                <input type="checkbox" data-bind="click:checkHttpServer,checked:httpChecked">
+                &nbsp;&nbsp;端口:<input type="text" class="input-small"  style="width:3em;" data-bind="value:httpServerPort,attr:{disabled:httpRunning()}"
             </li>
             <li>
                 是否开启执行来自httpServer 的js请求:
                 <input type="checkbox" data-bind="click:checkHttpJsQuery">
             </li>
         </ul>
+        <h3>
+        HTTP Proxy 的回调规则:
+        </h3>
+        <textarea data-bind="value:currentProxyRule">
+        </textarea><br>
+        <button class="btn btn-primary" type="button" data-bind="click:updateProxyRules" >更新http Proxy 规则</button>
+    </div>
+    <div class="tab-pane" id="tab4">
+        <a href="" data-bind="click:runPlot">运行</a>
+        <div id="placeholder1" style="width:600px;height:400px;"></div>
+        <div id="placeholder2" style="width:600px;height:400px;"></div>
     </div>
   </div>
 </div>

@@ -11,13 +11,58 @@ n4t.App  = function(options){
 	self.noticeCss= ko.observable("");
 	self.fileContent = ko.observable("");//硬盘上的文件的内容;
 	self.resultData = ko.observable("<hr>");
-	self.proxyRunning =false;
+	
+	self.httpServerPort = ko.observable(8894);
+	self.httpProxyPort = ko.observable(8893);
+	self.proxyChecked = ko.observable(false);
+	self.httpChecked = ko.observable(false);
 	//ko.observable(false);
 	self.httpRunning = ko.observable(false);
+	self.proxyRunning = ko.observable(false);
+	self.currentProxyRule = ko.observable(
+		['clear_proxy_rule();',
+	'push_proxy_rule({host:"dos.com",path:"http://s.com/a",body:"is from /a",headers:{Server:"notNginx"}});',
+	'push_proxy_rule({host:"log.mmstat.com",callback:function(req){',
+		'query_string = qs.parse(req.path);',
+		'if(query_string["gokey"]){',
+		'var clickUrl = query_string["gokey"];',
+		'var clickParams = qs.parse(clickUrl);',
+		'matched_params.push(clickParams);',
+		'log(clickParams);',
+		'}else{',
+		'log(req.path);',
+		'}',
+ 		'}})'].join("\n"));
+	self.updateProxyRules = function(){
+		eval(self.currentProxyRule());
+	}
 	self.checkProxyServer = function(){
+		setTimeout(function(){
+			var checked= self.proxyChecked();
+			if(checked){
+				console.log(window.proxyServer.listen(self.httpProxyPort()));
+
+				self.proxyRunning(true);
+			}else{
+				window.proxyServer.close();
+				self.proxyRunning(false);
+			}
+		},50);
 		return true;
 	}
 	self.checkHttpServer=function(){
+		setTimeout(function(){
+			var checked = self.httpChecked();
+			if(checked){
+				console.log("http server started");
+				console.log(window.http_server.listen(self.httpServerPort()));
+				self.httpRunning(true);
+			}else{
+				console.log("http server closed");
+				window.http_server.close();
+				self.httpRunning(false);
+			}
+		},50);
 		return true;
 	}
 	self.checkHttpJsQuery = function(){
@@ -29,8 +74,12 @@ n4t.App  = function(options){
 	self.startHttpServer = function(){
 
 	}
-	self.httpProxyRunning=function(){}
-	self.httpServerRunning=function(){}
+	self.httpProxyRunning=function(){
+		return self.httpRunning;
+	}
+	self.httpServerRunning=function(){
+		return self.proxyRunning;
+	}
 	self.openFile=function(){
 		var path = self.filePath();
 		n4t.fs.readFile(path, 'utf8', function (err,data) {
@@ -111,6 +160,70 @@ n4t.App  = function(options){
 			console.log(e);
 		}
 
+	};
+	self.runPlot=function(){
+		
+		var fs = require("fs");
+var oldData = JSON.parse(fs.readFileSync("/Users/renlu/Temp/app.nw/data/old.json"));
+var newData = JSON.parse(fs.readFileSync("/Users/renlu/Temp/app.nw/data/new.json"));
+var options = {
+			"xAxis":{"Categories":[]},
+			chart: {
+                type: 'column'
+            },
+              title: {
+                text: 'Column chart with negative values'
+            },
+              credits: {
+                enabled: false
+            },
+
+        };
+var xAxis = {};
+for(var c in oldData){
+	xAxis[c]="";
+}
+for(var c in newData){
+	xAxis[c]="";
+}
+//console.log(xAxis);
+
+for(var c in xAxis){
+	options["xAxis"]["Categories"].push(c);
+}
+//console.log(options);
+var new_serie_data  =[]; 
+for(var c in options["xAxis"]["Categories"]){
+	var temp=0;
+	if(oldData[options["xAxis"]["Categories"][c]]){
+		temp = oldData[options["xAxis"]["Categories"][c]];
+	}
+	new_serie_data.push(temp);
+}
+var series = [];
+series.push({"name":"old","data":new_serie_data});
+console.log(series);
+var new_serie_data  =[]; 
+for(var c in options["xAxis"]["Categories"]){
+	var temp=0;
+	if(newData[options["xAxis"]["Categories"][c]]){
+		temp = newData[options["xAxis"]["Categories"][c]];
+	}
+	new_serie_data.push(temp);
+}
+series.push({"name":"new","data":new_serie_data});
+options["series"] = series;
+
+	$("#placeholder1").highcharts(options);
+options["yAxis"]={min:0,"title":{text:"percentage"}};
+options["tooltip"]= { pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+ shared: true};
+ options["plotOptions"]= {column: {stacking: 'percent'}};
+//console.log(series);
+
+		//$("#placeholder").html(JSON.stringify(options).replace(/\n/g,"<br>"));
+
+		$("#placeholder2").highcharts(options);
 	};
 
 }
